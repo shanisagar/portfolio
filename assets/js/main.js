@@ -1,256 +1,141 @@
-/**
-* Template Name: iPortfolio - v3.3.0
-* Template URL: https://bootstrapmade.com/iportfolio-bootstrap-portfolio-websites-template/
-* Author: BootstrapMade.com
-* License: https://bootstrapmade.com/license/
-*/
-(function() {
+(function () {
   "use strict";
 
-  /**
-   * Easy selector helper function
-   */
-  const select = (el, all = false) => {
-    el = el.trim()
-    if (all) {
-      return [...document.querySelectorAll(el)]
-    } else {
-      return document.querySelector(el)
-    }
-  }
+  const select = (el, all = false) => all ? [...document.querySelectorAll(el)] : document.querySelector(el)
+
+  const header = select('#header')
+  const navToggle = select('.mobile-nav-toggle')
+  const backtotop = select('.back-to-top')
+  const navLinks = select('#navbar .nav-link', true)
 
   /**
-   * Easy event listener function
+   * Header background, back-to-top button and active nav link on scroll
    */
-  const on = (type, el, listener, all = false) => {
-    let selectEl = select(el, all)
-    if (selectEl) {
-      if (all) {
-        selectEl.forEach(e => e.addEventListener(type, listener))
-      } else {
-        selectEl.addEventListener(type, listener)
-      }
-    }
-  }
+  const onScroll = () => {
+    const y = window.scrollY
+    header.classList.toggle('scrolled', y > 20)
+    backtotop.classList.toggle('active', y > 300)
 
-  /**
-   * Easy on scroll event listener 
-   */
-  const onscroll = (el, listener) => {
-    el.addEventListener('scroll', listener)
-  }
-
-  /**
-   * Navbar links active state on scroll
-   */
-  let navbarlinks = select('#navbar .scrollto', true)
-  const navbarlinksActive = () => {
-    let position = window.scrollY + 200
-    navbarlinks.forEach(navbarlink => {
-      if (!navbarlink.hash) return
-      let section = select(navbarlink.hash)
+    const position = y + window.innerHeight / 3
+    navLinks.forEach(link => {
+      const section = select(link.hash)
       if (!section) return
-      if (position >= section.offsetTop && position <= (section.offsetTop + section.offsetHeight)) {
-        navbarlink.classList.add('active')
-      } else {
-        navbarlink.classList.remove('active')
-      }
+      const inView = position >= section.offsetTop && position < section.offsetTop + section.offsetHeight
+      link.classList.toggle('active', inView)
     })
   }
-  window.addEventListener('load', navbarlinksActive)
-  onscroll(document, navbarlinksActive)
+  window.addEventListener('load', onScroll)
+  document.addEventListener('scroll', onScroll, { passive: true })
 
   /**
-   * Scrolls to an element with header offset
+   * Mobile nav
    */
-  const scrollto = (el) => {
-    let elementPos = select(el).offsetTop
-    window.scrollTo({
-      top: elementPos,
-      behavior: 'smooth'
+  const setMobileNav = (open) => {
+    document.body.classList.toggle('mobile-nav-active', open)
+    const icon = navToggle.querySelector('i')
+    icon.classList.toggle('bi-list', !open)
+    icon.classList.toggle('bi-x', open)
+  }
+  navToggle.addEventListener('click', () => {
+    setMobileNav(!document.body.classList.contains('mobile-nav-active'))
+  })
+  select('#navbar a', true).forEach(a => a.addEventListener('click', () => setMobileNav(false)))
+
+  /**
+   * Age from birthday (28 June 1995)
+   */
+  const ageEl = select('#age')
+  if (ageEl) {
+    const born = new Date(1995, 5, 28)
+    const now = new Date()
+    let age = now.getFullYear() - born.getFullYear()
+    if (now < new Date(now.getFullYear(), born.getMonth(), born.getDate())) age--
+    ageEl.textContent = age
+  }
+  const yearEl = select('#year')
+  if (yearEl) yearEl.textContent = new Date().getFullYear()
+
+  /**
+   * Hero typing effect
+   */
+  const typed = select('.typed')
+  if (typed && window.Typed) {
+    new Typed('.typed', {
+      strings: typed.getAttribute('data-typed-items').split(','),
+      loop: true,
+      typeSpeed: 70,
+      backSpeed: 40,
+      backDelay: 1800
     })
   }
 
   /**
-   * Back to top button
+   * Stat counters
    */
-  let backtotop = select('.back-to-top')
-  if (backtotop) {
-    const toggleBacktotop = () => {
-      if (window.scrollY > 100) {
-        backtotop.classList.add('active')
-      } else {
-        backtotop.classList.remove('active')
-      }
+  const counters = select('.stat .num', true)
+  const runCounter = (el) => {
+    const target = +el.dataset.count
+    const start = performance.now()
+    const duration = 1200
+    const tick = (t) => {
+      const p = Math.min((t - start) / duration, 1)
+      el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3)))
+      if (p < 1) requestAnimationFrame(tick)
     }
-    window.addEventListener('load', toggleBacktotop)
-    onscroll(document, toggleBacktotop)
+    requestAnimationFrame(tick)
+  }
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          runCounter(entry.target)
+          io.unobserve(entry.target)
+        }
+      })
+    }, { threshold: 0.5 })
+    counters.forEach(c => io.observe(c))
+  } else {
+    counters.forEach(c => c.textContent = c.dataset.count)
   }
 
   /**
-   * Mobile nav toggle
+   * Portfolio isotope and filter
    */
-  on('click', '.mobile-nav-toggle', function(e) {
-    select('body').classList.toggle('mobile-nav-active')
-    this.classList.toggle('bi-list')
-    this.classList.toggle('bi-x')
+  window.addEventListener('load', () => {
+    const container = select('.portfolio-container')
+    if (!container) return
+
+    const iso = new Isotope(container, {
+      itemSelector: '.portfolio-item',
+      layoutMode: 'fitRows'
+    })
+
+    const filters = select('#portfolio-flters li', true)
+    filters.forEach(filter => {
+      filter.addEventListener('click', () => {
+        filters.forEach(f => f.classList.remove('filter-active'))
+        filter.classList.add('filter-active')
+        iso.arrange({ filter: filter.getAttribute('data-filter') })
+        iso.once('arrangeComplete', () => AOS.refresh())
+      })
+    })
   })
 
   /**
-   * Scrool with ofset on links with a class name .scrollto
+   * Portfolio lightbox
    */
-  on('click', '.scrollto', function(e) {
-    if (select(this.hash)) {
-      e.preventDefault()
-
-      let body = select('body')
-      if (body.classList.contains('mobile-nav-active')) {
-        body.classList.remove('mobile-nav-active')
-        let navbarToggle = select('.mobile-nav-toggle')
-        navbarToggle.classList.toggle('bi-list')
-        navbarToggle.classList.toggle('bi-x')
-      }
-      scrollto(this.hash)
-    }
-  }, true)
-
-  /**
-   * Scroll with ofset on page load with hash links in the url
-   */
-  window.addEventListener('load', () => {
-    if (window.location.hash) {
-      if (select(window.location.hash)) {
-        scrollto(window.location.hash)
-      }
-    }
-  });
-
-  /**
-   * Hero type effect
-   */
-  const typed = select('.typed')
-  if (typed) {
-    let typed_strings = typed.getAttribute('data-typed-items')
-    typed_strings = typed_strings.split(',')
-    new Typed('.typed', {
-      strings: typed_strings,
-      loop: true,
-      typeSpeed: 100,
-      backSpeed: 50,
-      backDelay: 2000
-    });
-  }
-
-  /**
-   * Skills animation
-   */
-  let skilsContent = select('.skills-content');
-  if (skilsContent) {
-    new Waypoint({
-      element: skilsContent,
-      offset: '80%',
-      handler: function(direction) {
-        let progress = select('.progress .progress-bar', true);
-        progress.forEach((el) => {
-          el.style.width = el.getAttribute('aria-valuenow') + '%'
-        });
-      }
-    })
-  }
-
-  /**
-   * Porfolio isotope and filter
-   */
-  window.addEventListener('load', () => {
-    let portfolioContainer = select('.portfolio-container');
-    if (portfolioContainer) {
-      let portfolioIsotope = new Isotope(portfolioContainer, {
-        itemSelector: '.portfolio-item'
-      });
-
-      let portfolioFilters = select('#portfolio-flters li', true);
-
-      on('click', '#portfolio-flters li', function(e) {
-        e.preventDefault();
-        portfolioFilters.forEach(function(el) {
-          el.classList.remove('filter-active');
-        });
-        this.classList.add('filter-active');
-
-        portfolioIsotope.arrange({
-          filter: this.getAttribute('data-filter')
-        });
-        portfolioIsotope.on('arrangeComplete', function() {
-          AOS.refresh()
-        });
-      }, true);
-    }
-
-  });
-
-  /**
-   * Initiate portfolio lightbox 
-   */
-  const portfolioLightbox = GLightbox({
-    selector: '.portfolio-lightbox'
-  });
-
-  /**
-   * Portfolio details slider
-   */
-  new Swiper('.portfolio-details-slider', {
-    speed: 400,
-    loop: true,
-    autoplay: {
-      delay: 5000,
-      disableOnInteraction: false
-    },
-    pagination: {
-      el: '.swiper-pagination',
-      type: 'bullets',
-      clickable: true
-    }
-  });
-
-  /**
-   * Testimonials slider
-   */
-  new Swiper('.testimonials-slider', {
-    speed: 600,
-    loop: true,
-    autoplay: {
-      delay: 5000,
-      disableOnInteraction: false
-    },
-    slidesPerView: 'auto',
-    pagination: {
-      el: '.swiper-pagination',
-      type: 'bullets',
-      clickable: true
-    },
-    breakpoints: {
-      320: {
-        slidesPerView: 1,
-        spaceBetween: 20
-      },
-
-      1200: {
-        slidesPerView: 3,
-        spaceBetween: 20
-      }
-    }
-  });
+  GLightbox({ selector: '.portfolio-lightbox' })
 
   /**
    * Animation on scroll
    */
   window.addEventListener('load', () => {
     AOS.init({
-      duration: 1000,
-      easing: 'ease-in-out',
+      duration: 800,
+      easing: 'ease-out-cubic',
       once: true,
-      mirror: false
+      offset: 60
     })
-  });
+  })
 
 })()
