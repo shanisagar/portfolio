@@ -127,6 +127,19 @@
   GLightbox({ selector: '.portfolio-lightbox' })
 
   /**
+   * APK install hints
+   */
+  const isAndroid = /Android/i.test(navigator.userAgent)
+  select('.btn-apk', true).forEach(btn => {
+    const hint = document.createElement('span')
+    hint.className = 'apk-hint'
+    hint.textContent = isAndroid
+      ? 'Tap, then open the download and allow "Install unknown apps" if prompted.'
+      : 'Android only — open this page on your phone to install.'
+    btn.after(hint)
+  })
+
+  /**
    * Animation on scroll
    */
   window.addEventListener('load', () => {

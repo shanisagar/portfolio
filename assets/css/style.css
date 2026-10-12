@@ -987,6 +987,42 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--accent-2);
 }
 
+.btn-apk {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 9px 18px;
+  border-radius: 999px;
+  background: var(--gradient);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-apk:hover {
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px -10px rgba(124, 92, 255, 0.7);
+}
+
+.btn-apk i {
+  font-size: 18px;
+}
+
+.btn-apk small {
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+.apk-hint {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
 /* Touch devices: always show actions */
 @media (hover: none) {
   .project-actions {
