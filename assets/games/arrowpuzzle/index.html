@@ -6,6 +6,7 @@
     <title>Unity Web Player | Arrow Puzzle</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
+    <style>html,body{height:100%;background:#0b0d17;overflow:hidden}@media (min-aspect-ratio: 9/16){#unity-container.unity-mobile{height:100%;width:auto;aspect-ratio:9/16;left:50%;transform:translateX(-50%)}}</style>
   </head>
   <body>
     <div id="unity-container" class="unity-desktop">
@@ -87,7 +88,7 @@
       // JS_FileSystem_Sync() behavior, but in future Unity version, this will be
       // expected to change.
 
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+      if (true) { // portfolio: always fill the window/pop-up (was a mobile-only check)
         // Mobile device style: fill the whole browser client area with the game canvas:
 
         var meta = document.createElement('meta');

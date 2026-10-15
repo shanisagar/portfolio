@@ -152,3 +152,51 @@
   })
 
 })()
+
+/**
+ * Game pop-up: "Play in browser" opens the Unity WebGL build in a modal on this page.
+ */
+(function () {
+  const modal = document.getElementById("game-modal");
+  if (!modal) return;
+  const frame = document.getElementById("game-modal-frame");
+  const title = document.getElementById("game-modal-title");
+  let lastFocus = null;
+
+  function openGame(url, name) {
+    lastFocus = document.activeElement;
+    title.textContent = name || "Game";
+    frame.title = name || "Game";
+    frame.src = url;
+    modal.hidden = false;
+    document.body.classList.add("game-open");
+    frame.addEventListener("load", function () { try { frame.focus(); } catch (e) {} }, { once: true });
+  }
+
+  function closeGame() {
+    if (modal.hidden) return;
+    if (document.fullscreenElement) document.exitFullscreen();
+    frame.src = "about:blank"; // stops the game and its sound
+    modal.hidden = true;
+    document.body.classList.remove("game-open");
+    if (lastFocus) lastFocus.focus();
+  }
+
+  document.addEventListener("click", function (e) {
+    const btn = e.target.closest(".btn-play");
+    if (!btn) return;
+    e.preventDefault();
+    const card = btn.closest(".project");
+    const h3 = card && card.querySelector("h3");
+    openGame(btn.getAttribute("href"), btn.dataset.gameTitle || (h3 && h3.textContent));
+  });
+
+  modal.querySelector("[data-game-close]").addEventListener("click", closeGame);
+  modal.querySelector("[data-game-fullscreen]").addEventListener("click", function () {
+    const el = modal.querySelector(".game-modal-box");
+    if (document.fullscreenElement) document.exitFullscreen();
+    else if (el.requestFullscreen) el.requestFullscreen();
+  });
+  modal.addEventListener("click", function (e) { if (e.target === modal) closeGame(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeGame(); });
+})();

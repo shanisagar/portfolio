@@ -593,7 +593,7 @@
                                 <p>Minimal neon logic puzzle where each arrow flies off the board only if its path is clear. A procedural generator places arrows in reverse removal order so every level is solvable, and a built-in solver checks each one. Difficulty rises through long blocking chains, with endless levels after the curated set and custom Unity editor tools for previewing them.</p>
                                 <div class="tags"><span>Unity</span><span>C#</span><span>Procedural Generation</span><span>Puzzle Solver</span></div>
                                 <a href="assets/apk/ArrowPuzzle.apk" class="btn-apk" download type="application/vnd.android.package-archive"><i class="bx bxl-android"></i> Install APK <small>· 40 MB</small></a>
-                                <a href="assets/games/arrowpuzzle/" class="btn-apk btn-play" target="_blank" rel="noopener"><i class="bx bx-play-circle"></i> Play in browser</a>
+                                <a href="assets/games/arrowpuzzle/" class="btn-apk btn-play" data-game-title="Arrow Puzzle"><i class="bx bx-play-circle"></i> Play in browser</a>
                             </div>
                         </article>
                     </div>
@@ -659,6 +659,20 @@
     <a href="#" class="back-to-top" aria-label="Back to top"><i class="bi bi-arrow-up-short"></i></a>
 
     <!-- Vendor JS Files -->
+    <!-- Game pop-up: "Play in browser" buttons open the game here instead of a new tab -->
+    <div id="game-modal" class="game-modal" role="dialog" aria-modal="true" aria-labelledby="game-modal-title" hidden>
+        <div class="game-modal-box">
+            <div class="game-modal-bar">
+                <span id="game-modal-title">Game</span>
+                <div class="game-modal-actions">
+                    <button type="button" class="game-modal-btn" data-game-fullscreen aria-label="Fullscreen"><i class="bx bx-fullscreen"></i></button>
+                    <button type="button" class="game-modal-btn" data-game-close aria-label="Close game"><i class="bx bx-x"></i></button>
+                </div>
+            </div>
+            <iframe id="game-modal-frame" title="Game" allow="fullscreen; autoplay; gamepad" allowfullscreen></iframe>
+        </div>
+    </div>
+
     <script src="assets/vendor/aos/aos.js"></script>
     <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
     <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>

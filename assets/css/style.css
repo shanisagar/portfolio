@@ -1294,3 +1294,23 @@ h1, h2, h3, h4, h5, h6 {
   color: #fff;
   font-weight: 600;
 }
+
+/* Game pop-up */
+.game-modal { position: fixed; inset: 0; z-index: 10000; display: flex; align-items: center; justify-content: center;
+  background: rgba(5, 7, 14, 0.82); backdrop-filter: blur(6px); }
+.game-modal[hidden] { display: none; }
+.game-modal-box { display: flex; flex-direction: column; height: 92vh; aspect-ratio: 9 / 16; max-width: 96vw;
+  background: var(--surface); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; overflow: hidden;
+  box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.8), 0 0 60px -20px rgba(34, 211, 238, 0.35); }
+.game-modal-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px 8px 16px;
+  font-weight: 600; font-size: 15px; color: #fff; border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+.game-modal-actions { display: flex; gap: 6px; }
+.game-modal-btn { width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 999px; background: transparent; color: #fff; font-size: 20px; cursor: pointer; }
+.game-modal-btn:hover { border-color: var(--accent-2); color: var(--accent-2); }
+.game-modal iframe { flex: 1; width: 100%; border: 0; background: #0b0d17; display: block; }
+body.game-open { overflow: hidden; }
+.game-modal-box:fullscreen { height: 100%; width: 100%; max-width: none; aspect-ratio: auto; border-radius: 0; border: 0; }
+@media (max-width: 600px), (max-height: 520px) {
+  .game-modal-box { height: 100%; width: 100%; max-width: none; aspect-ratio: auto; border-radius: 0; border: 0; }
+}
