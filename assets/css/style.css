@@ -1016,6 +1016,18 @@ h1, h2, h3, h4, h5, h6 {
   opacity: 0.8;
 }
 
+.btn-play {
+  margin-left: 8px;
+  background: transparent;
+  border: 1px solid var(--accent-2);
+  color: var(--accent-2);
+}
+
+.btn-play:hover {
+  background: rgba(34, 211, 238, 0.1);
+  color: var(--accent-2);
+}
+
 .apk-hint {
   display: block;
   margin-top: 8px;

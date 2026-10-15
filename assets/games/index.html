@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07070d">
+  <title>Play my games</title>
+  <style>
+    :root { --bg:#07070d; --card:#10101c; --fg:#ececf6; --muted:#8c8ca8; --accent:#38f2ff; --accent2:#ff3fd8; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; background:radial-gradient(ellipse at 50% -10%, #1c1546 0%, var(--bg) 55%) fixed;
+      color:var(--fg); font-family:system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    main { max-width:1120px; margin:0 auto; padding:48px 16px 64px; }
+    h1 { margin:0 0 6px; font-size:clamp(28px, 5vw, 42px); letter-spacing:-.01em; }
+    p.lead { margin:0 0 32px; color:var(--muted); }
+    .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:18px; }
+    a.card { display:block; text-decoration:none; color:inherit; background:var(--card); border:1px solid #ffffff12;
+      border-radius:16px; overflow:hidden; transition:transform .15s, border-color .15s, box-shadow .15s; }
+    a.card:hover, a.card:focus-visible { transform:translateY(-3px); border-color:#38f2ff66; box-shadow:0 12px 40px #38f2ff1f; outline:none; }
+    .cover { aspect-ratio:630/500; background:#000 center/cover no-repeat; }
+    .body { padding:14px 16px 16px; }
+    .body h2 { margin:0 0 4px; font-size:17px; }
+    .body p { margin:0 0 12px; font-size:13.5px; line-height:1.45; color:var(--muted); }
+    .play { display:inline-block; font-size:13px; font-weight:600; padding:6px 14px; border-radius:999px;
+      background:linear-gradient(90deg, var(--accent), var(--accent2)); color:#06060c; }
+    .note { margin-top:36px; font-size:13px; color:var(--muted); }
+    .empty { color:var(--muted); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Play in your browser</h1>
+    <p class="lead">Unity games built for Android, running here with no install. Works with touch, mouse and keyboard.</p>
+    <div class="grid" id="grid"><p class="empty">Loading games&hellip;</p></div>
+    <p class="note">First load downloads the game (a few MB); after that it's cached.</p>
+  </main>
+  <script>
+    fetch("games.json", { cache: "no-store" })
+      .then(function (r) { return r.json(); })
+      .then(function (games) {
+        var grid = document.getElementById("grid");
+        grid.innerHTML = "";
+        if (!games.length) { grid.innerHTML = '<p class="empty">No games built yet.</p>'; return; }
+        games.forEach(function (g) {
+          var a = document.createElement("a");
+          a.className = "card"; a.href = g.id + "/index.html";
+          a.innerHTML = '<div class="cover"></div><div class="body"><h2></h2><p></p><span class="play">Play</span></div>';
+          a.querySelector(".cover").style.backgroundImage = "url('" + g.id + "/cover.png')";
+          a.querySelector("h2").textContent = g.name;
+          a.querySelector("p").textContent = g.blurb;
+          grid.appendChild(a);
+        });
+      })
+      .catch(function () {
+        document.getElementById("grid").innerHTML =
+          '<p class="empty">Couldn’t load the game list. Open this page from a web server (see README), not by double-clicking it.</p>';
+      });
+  </script>
+</body>
+</html>
