@@ -104,10 +104,17 @@
    */
   const gameLimit = (window.SITE_FEATURES || {}).gameLimit || {}
   if (gameLimit.enabled && gameLimit.count > 0) {
-    select('.portfolio-container .portfolio-item', true)
-      .filter(item => item.querySelector('a[href*="portfoliogames/?play="]'))
-      .slice(gameLimit.count)
-      .forEach(item => item.remove())
+    const isGame = item => item.querySelector('a[href*="portfoliogames/?play="]')
+    const gameId = item => (isGame(item).getAttribute('href').split('?play=')[1] || '').split(/[&#]/)[0]
+    let cards = select('.portfolio-container .portfolio-item', true).filter(isGame)
+    // pinned games move to the top, in the order listed
+    const pinned = (gameLimit.first || []).map(id => cards.find(c => gameId(c) === id)).filter(Boolean)
+    if (pinned.length && cards.length) {
+      const anchor = cards[0]
+      pinned.forEach(c => anchor.parentNode.insertBefore(c, anchor))
+      cards = pinned.concat(cards.filter(c => pinned.indexOf(c) < 0))
+    }
+    cards.slice(gameLimit.count).forEach(item => item.remove())
   }
 
   /**
