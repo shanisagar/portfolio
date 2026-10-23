@@ -7,5 +7,5 @@
  *                     other portfolio projects are never affected.
  */
 window.SITE_FEATURES = {
-  gameLimit: { enabled: false, count: 10 }
+  gameLimit: { enabled: true, count: 10 }
 };
