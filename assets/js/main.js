@@ -99,6 +99,18 @@
   }
 
   /**
+   * Feature flag (assets/js/site-features.js): optionally show only the first N game cards.
+   * Runs before Isotope lays the grid out, so the hidden cards leave no gaps.
+   */
+  const gameLimit = (window.SITE_FEATURES || {}).gameLimit || {}
+  if (gameLimit.enabled && gameLimit.count > 0) {
+    select('.portfolio-container .portfolio-item', true)
+      .filter(item => item.querySelector('a[href*="portfoliogames/?play="]'))
+      .slice(gameLimit.count)
+      .forEach(item => item.remove())
+  }
+
+  /**
    * Portfolio isotope and filter
    */
   window.addEventListener('load', () => {
